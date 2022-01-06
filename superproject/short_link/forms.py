@@ -7,7 +7,7 @@ from short_link.models import User
 
 class UserSignupForm(UserCreationForm):
     username = forms.CharField(
-        label="User",
+        label="Username",
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     email = forms.EmailField(
@@ -26,3 +26,14 @@ class UserSignupForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
+
+class UserLoginForm(AuthenticationForm):
+    username = forms.CharField(
+        label="Username",
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+    )

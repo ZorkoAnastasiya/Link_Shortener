@@ -4,6 +4,8 @@ import dj_database_url
 import dotenv
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 dotenv.load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -129,3 +131,6 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
     "x-user",
 ]
+
+LOGIN_REDIRECT_URL = reverse_lazy("short:home")
+LOGOUT_REDIRECT_URL = reverse_lazy("login")

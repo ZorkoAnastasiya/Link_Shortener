@@ -2,12 +2,13 @@ from typing import Any
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 
-from short_link.forms import UserSignupForm
+from short_link.forms import UserSignupForm, UserLoginForm
 
 
 def index(request):
@@ -38,3 +39,12 @@ class UserSignupView(SuccessMessageMixin, FormView):
         return self.render_to_response(
             self.get_context_data(form=form, message=messages)
         )
+
+
+class UserLoginView(LoginView):
+    """
+    User authorization.
+    """
+
+    form_class = UserLoginForm
+    template_name = "short_link/login.html"

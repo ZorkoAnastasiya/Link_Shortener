@@ -16,9 +16,9 @@
             </ul>
             <span>
                 {% if request.user.is_authenticated %}
-                    Welcome, {{user.username}}! | <a href="#">Logout</a>
+                    Welcome, {{user.username}}! | <a href="{% url 'logout' %}">Logout</a>
                 {% else %}
-                    <a href="#">Registration</a> | <a href="#">Log In</a>
+                    <a href="{% url 'signup' %}">Registration</a> | <a href="{% url 'login' %}">Log In</a>
                 {% endif %}
             </span>
         </div>
