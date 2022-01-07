@@ -4,15 +4,37 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import FormView
+from django.views.generic import FormView, ListView, DetailView
 
 from short_link.forms import UserSignupForm, UserLoginForm
+from short_link.models import Links
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+class LinkView(DetailView):
+    """
+    Demonstration of the full link and its short version.
+    """
+
+    model = Links
+    template_name = "short_link/link.html"
+
+
+class UserLinksView(ListView):
+    """
+    Lists all user links.
+    """
+
+    model = Links
+    template_name = "short_link/all_links.html"
+    extra_context = {"title": "My Links"}
+    paginate_by = 10
+
+    def get_queryset(self) -> QuerySet:
+        user = self.request.user.pk
+        return super().get_queryset().filter(users=user)
 
 
 class UserSignupView(SuccessMessageMixin, FormView):

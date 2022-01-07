@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+    {{title}}: {{block.super}}
+
+{% endblock %}
+
+{% block content %}
+    {% for link in object_list %}
+<div class="card mb-3">
+         <div class="card-body">
+             <p class="card-title">Full Link: {{link.full_link}}</p>
+             <p class="card-text">Short Link: {{link.short_link}}</p>
+         </div>
+</div>
+     {% empty %}
+     <p>No content</p>
+     {% endfor %}
+{% endblock %}

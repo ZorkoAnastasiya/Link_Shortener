@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+
+    Link id {{object.id}}: {{block.super}}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="card mb-3">
+    <div class="card-body">
+        <p class="card-title">Full Link: {{object.full_link}}</p>
+        <p class="card-text">Short Link: {{object.short_link}}</p>
+    </div>
+</div>
+
+{% endblock %}
