@@ -2,18 +2,29 @@ from typing import Any
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.db.models import QuerySet
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import FormView, ListView, DetailView, CreateView
+from django.views.generic import FormView, ListView, DetailView, CreateView, RedirectView
 
 from short_link.forms import UserSignupForm, UserLoginForm, AddLinkForm
 from short_link.models import Links, User
 
 
-class CreateShortLinkView(CreateView):
+class MyRedirectView(RedirectView):
+    """
+    Redirect short link to source.
+    """
+
+    def get_redirect_url(self, *args, **kwargs):
+        obj = get_object_or_404(Links, short_link=self.kwargs.get("short_link"))
+        return obj.full_link
+
+
+class CreateShortLinkView(LoginRequiredMixin, CreateView):
     """
     Creating a short link and saving the data to the database.
     """
@@ -51,7 +62,7 @@ class CreateShortLinkView(CreateView):
         return super().form_invalid(form)
 
 
-class LinkView(DetailView):
+class LinkView(LoginRequiredMixin, DetailView):
     """
     Demonstration of the full link and its short version.
     """
@@ -59,8 +70,13 @@ class LinkView(DetailView):
     model = Links
     template_name = "short_link/link.html"
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["host"] = self.request.get_host()
+        return context
 
-class UserLinksView(ListView):
+
+class UserLinksView(LoginRequiredMixin, ListView):
     """
     Lists all user links.
     """
@@ -70,9 +86,14 @@ class UserLinksView(ListView):
     extra_context = {"title": "My Links"}
     paginate_by = 10
 
-    def get_queryset(self) -> QuerySet:
+    def get_queryset(self):
         user = self.request.user.pk
         return super().get_queryset().filter(users=user)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["host"] = self.request.get_host()
+        return context
 
 
 class UserSignupView(SuccessMessageMixin, FormView):

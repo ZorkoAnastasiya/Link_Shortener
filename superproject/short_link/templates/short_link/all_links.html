@@ -10,8 +10,8 @@
     {% for link in object_list %}
 <div class="card mb-3">
          <div class="card-body">
-             <p class="card-title">Full Link: {{link.full_link}}</p>
-             <p class="card-text">Short Link: {{link.short_link}}</p>
+             <p class="card-title"><b>Full Link:</b> {{link.full_link}}</p>
+             <p class="card-text"><b>Short Link:</b> {{host}}/{{link.short_link}}</p>
          </div>
 </div>
      {% empty %}
