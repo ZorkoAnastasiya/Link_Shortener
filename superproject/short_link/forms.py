@@ -2,7 +2,14 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 
-from short_link.models import User
+from short_link.models import User, Links
+
+
+class AddLinkForm(forms.ModelForm):
+    class Meta:
+        model = Links
+        fields = ["full_link"]
+        widgets = {"full_link": forms.URLInput(attrs={"class": "form-control"})}
 
 
 class UserSignupForm(UserCreationForm):

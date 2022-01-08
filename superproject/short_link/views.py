@@ -7,10 +7,48 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import FormView, ListView, DetailView
+from django.views.generic import FormView, ListView, DetailView, CreateView
 
-from short_link.forms import UserSignupForm, UserLoginForm
-from short_link.models import Links
+from short_link.forms import UserSignupForm, UserLoginForm, AddLinkForm
+from short_link.models import Links, User
+
+
+class CreateShortLinkView(CreateView):
+    """
+    Creating a short link and saving the data to the database.
+    """
+
+    form_class = AddLinkForm
+    template_name = "short_link/add_link.html"
+    extra_context = {"title": "Add Url"}
+    login_url = "short:link"
+
+    @staticmethod
+    def create_short_link():
+        import random
+        import string
+        rand_str = string.ascii_letters + string.digits
+        short_link = "".join(random.choice(rand_str) for _ in range(8))
+        return short_link
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        short = self.create_short_link()
+        while Links.objects.filter(short_link=short).exists():
+            short = self.create_short_link()
+        obj.short_link = short
+        obj.save()
+        user = User.objects.get(id=self.request.user.pk)
+        user.links.add(obj)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        url = form.instance.full_link
+        if Links.objects.filter(full_link=url).exists():
+            obj = Links.objects.get(full_link=url)
+            from django.shortcuts import redirect
+            return redirect(obj)
+        return super().form_invalid(form)
 
 
 class LinkView(DetailView):

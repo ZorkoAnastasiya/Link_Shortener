@@ -17,3 +17,7 @@ class Links(models.Model):
 
     def get_absolute_url(self):
         return reverse_lazy("short:link", kwargs={"pk": self.pk})
+
+    class Meta:
+        verbose_name = "link"
+        verbose_name_plural = "links"
