@@ -3,3 +3,4 @@ psycopg2-binary
 dj-database-url
 python-dotenv
 django-cors-headers
+django_heroku
