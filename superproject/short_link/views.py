@@ -9,8 +9,13 @@ from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DetailView, FormView, ListView,
-                                  RedirectView)
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    RedirectView,
+)
 
 from short_link.forms import AddLinkForm, UserLoginForm, UserSignupForm
 from short_link.models import Links, User
