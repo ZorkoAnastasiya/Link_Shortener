@@ -1,16 +1,18 @@
-from typing import Any
+from typing import Any, Optional
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import QuerySet
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import FormView, ListView, DetailView, CreateView, RedirectView
+from django.views.generic import (CreateView, DetailView, FormView, ListView,
+                                  RedirectView)
 
-from short_link.forms import UserSignupForm, UserLoginForm, AddLinkForm
+from short_link.forms import AddLinkForm, UserLoginForm, UserSignupForm
 from short_link.models import Links, User
 
 
@@ -19,7 +21,7 @@ class MyRedirectView(RedirectView):
     Redirect short link to source.
     """
 
-    def get_redirect_url(self, *args, **kwargs):
+    def get_redirect_url(self, *args, **kwargs) -> Optional[str]:
         obj = get_object_or_404(Links, short_link=self.kwargs.get("short_link"))
         return obj.full_link
 
@@ -35,14 +37,15 @@ class CreateShortLinkView(LoginRequiredMixin, CreateView):
     login_url = "short:link"
 
     @staticmethod
-    def create_short_link():
+    def create_short_link() -> str:
         import random
         import string
+
         rand_str = string.ascii_letters + string.digits
         short_link = "".join(random.choice(rand_str) for _ in range(8))
         return short_link
 
-    def form_valid(self, form):
+    def form_valid(self, form: Any) -> HttpResponse:
         obj = form.save(commit=False)
         short = self.create_short_link()
         while Links.objects.filter(short_link=short).exists():
@@ -53,24 +56,27 @@ class CreateShortLinkView(LoginRequiredMixin, CreateView):
         user.links.add(obj)
         return super().form_valid(form)
 
-    def form_invalid(self, form):
+    def form_invalid(self, form: Any) -> HttpResponse:
         url = form.instance.full_link
         if Links.objects.filter(full_link=url).exists():
             obj = Links.objects.get(full_link=url)
+            user = User.objects.get(id=self.request.user.pk)
+            user.links.add(obj)
             from django.shortcuts import redirect
+
             return redirect(obj)
         return super().form_invalid(form)
 
 
 class LinkView(LoginRequiredMixin, DetailView):
     """
-    Demonstration of the full link and its short version.
+    Demonstration of a short link.
     """
 
     model = Links
     template_name = "short_link/link.html"
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["host"] = self.request.get_host()
         return context
@@ -86,11 +92,11 @@ class UserLinksView(LoginRequiredMixin, ListView):
     extra_context = {"title": "My Links"}
     paginate_by = 10
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet:
         user = self.request.user.pk
         return super().get_queryset().filter(users=user)
 
-    def get_context_data(self, *, object_list=None, **kwargs):
+    def get_context_data(self, *, object_list=None, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["host"] = self.request.get_host()
         return context

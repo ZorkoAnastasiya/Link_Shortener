@@ -1,9 +1,8 @@
 import os
+from pathlib import Path
 
 import dj_database_url
 import dotenv
-from pathlib import Path
-
 from django.urls import reverse_lazy
 
 dotenv.load_dotenv()

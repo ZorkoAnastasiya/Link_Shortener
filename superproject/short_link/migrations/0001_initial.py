@@ -14,12 +14,28 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Links',
+            name="Links",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('full_link', models.URLField(unique=True)),
-                ('short_link', models.CharField(db_index=True, max_length=200, unique=True)),
-                ('users', models.ManyToManyField(related_name='links', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("full_link", models.URLField(unique=True)),
+                (
+                    "short_link",
+                    models.CharField(db_index=True, max_length=200, unique=True),
+                ),
+                (
+                    "users",
+                    models.ManyToManyField(
+                        related_name="links", to=settings.AUTH_USER_MODEL
+                    ),
+                ),
             ],
         ),
     ]

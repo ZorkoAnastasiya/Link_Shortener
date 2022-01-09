@@ -1,8 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-from short_link.models import User, Links
+from short_link.models import Links, User
 
 
 class AddLinkForm(forms.ModelForm):
