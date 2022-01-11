@@ -1,6 +1,6 @@
 # Link Shortener  [![View project](https://img.shields.io/badge/VIEW-PROJECT-268BD2)](https://link-tiny.herokuapp.com/)
 
-___
+
 
 ### _Installing and running the project:_
 
